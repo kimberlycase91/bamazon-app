@@ -70,6 +70,7 @@ function processOrder(id, quantity) {
         }
         else {
             console.log("Sorry, this item is out of stock!");
+            connection.end();
         }
     });
 };

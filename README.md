@@ -14,3 +14,5 @@ This will connect to the database, display the current products, and prompt the 
 Bamazon uses the mysql npm to access data in the database and display it in the console, and uses inquirer npm to prompt the user. 
 
 Upon connecting, the table from the SQL database is displayed in the console. When the user inputs the item number and quantity, the app first checks that there is enough of the item in stock. If there is, it subtracts the purchase, updates the current stock and displays the final price to the user.
+
+[Customer Demo](https://github.com/kimberlycase91/bamazon-app/blob/master/bamazonCustomer%20Demo.mkv)
