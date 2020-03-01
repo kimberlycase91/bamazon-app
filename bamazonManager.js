@@ -18,41 +18,109 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
-
-inquirer.prompt([
-    {
-        name: "whatToDo",
-        type: "list",
-        message: "What would you like to do?",
-        choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
-    }
-])
-.then(function (answer) {
-switch (answer) { 
-case "View Products for Sale":
-viewProducts();
-break;
-
-case "View Low Inventory":
-viewLow();
-break;
-
-case "Add to Inventory":
-addToInventory();
-break;
-
-case "Add New Product":
-addNewProduct();
-break;
-}
+    whatToDo();
 });
-});
+
+function whatToDo() {
+    inquirer.prompt([
+        {
+            name: "whatToDo",
+            type: "list",
+            message: "What would you like to do?",
+            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
+        }
+    ])
+        .then(function (answer) {
+            console.log(answer);
+            var command = answer.whatToDo;
+
+
+            switch (command) {
+                case "View Products for Sale":
+                    console.log("Okay, view products...\n");
+                    viewProducts();
+                    break;
+
+                case "View Low Inventory":
+                    console.log("Okay, view low inventory...\n");
+                    viewLow();
+                    break;
+
+                case "Add to Inventory":
+                    console.log("Okay, add to inventory...\n");
+                    addToInventory();
+                    break;
+
+                case "Add New Product":
+                    console.log("Okay, add new product...\n");
+                    addNewProduct();
+                    break;
+
+            };
+        })
+};
 
 function viewProducts() {
     console.log("Checking Inventory...\n");
-    connection.query("SELECT * FROM products", function(err, res) {
+    connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
-        console.log(res);
+        console.table(res);
+        connection.end();
+    })
+};
+
+function viewLow() {
+    console.log("Low inventory: \n");
+    connection.query("SELECT * FROM products WHERE stock_quantity < 5", function (err, res) {
+        if (err) throw err;
+        console.table(res);
         connection.end();
     })
 }
+
+function addToInventory() {
+    console.log("Add to inventory: \n");
+    connection.query("SELECT * FROM products", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        inquirer.prompt([
+            {
+                name: "itemToAdd",
+                type: "number",
+                message: "Which item would you like to update?"
+            },
+            {
+                name: "howMuch",
+                type: "number",
+                message: "How many would you like to add?"
+            }
+        ])
+            .then(function (answer) {
+                var selectedItem = answer.itemToAdd;
+                var selectedQuantity = answer.howMuch;
+                selectProduct(selectedItem, selectedQuantity);
+            });
+    })};
+
+    function selectProduct(id, amount) {
+        connection.query("SELECT * FROM products WHERE item_id = ?", [id], function (err, res) {
+            if (err) throw err;
+            var newQuantity = res[0].stock_quantity + amount;
+            updateStock(id, newQuantity);
+            console.log("Updating stock...\n");
+            connection.end();
+        })
+    };
+
+    function updateStock(id, amount) {
+        connection.query("UPDATE products SET ? WHERE ?", [{ stock_quantity: amount }, { item_id: id }], function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " products updated! \n");
+            console.log("item number " + id + " has a new quantity of " + amount);
+        })
+    }
+
+    function addNewProduct() {
+        console.log("Add new product")
+        connection.end();
+    };
