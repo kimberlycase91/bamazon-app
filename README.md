@@ -28,3 +28,4 @@ Manager app:
 Upon connecting to the database, the app uses inquirer to display a list of choices. Each choice uses the sql npm to access and manipulate the database. 
 
 [Customer Demo](https://github.com/kimberlycase91/bamazon-app/blob/master/bamazonCustomer%20Demo.mkv)
+[Manager Demo](https://github.com/kimberlycase91/bamazon-app/blob/master/bamazonManager%20Demo.mkv)
