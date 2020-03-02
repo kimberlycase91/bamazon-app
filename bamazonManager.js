@@ -121,6 +121,49 @@ function addToInventory() {
     }
 
     function addNewProduct() {
-        console.log("Add new product")
+        inquirer.prompt([
+        {
+            name: "name",
+            type: "input",
+            message: "New Product Name: "
+        },
+        {
+            name: "department",
+            type: "input",
+            message: "New Product Department: "
+        },
+        {
+            name: "price",
+            type: "number",
+            message: "New Product Price: "
+        },
+        {
+            name: "quantity",
+            type: "number",
+            message: "New Product Quantity: "
+        }
+        ])
+        .then(function(answer){
+            var name = answer.name;
+            var department = answer.department;
+            var price = answer.price;
+            var quantity = answer.quantity;
+            pushNewProduct(name, department, price, quantity);
+        })
+    }
+    
+    function pushNewProduct (name, department, price, quantity) {
+        console.log("Add new product");
+        connection.query("INSERT INTO products SET ?", {
+            product_name: name,
+            department_name: department,
+            price: price,
+            stock_quantity: quantity
+        },
+        function(err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " product inserted!\n");
+        }
+        )
         connection.end();
     };
